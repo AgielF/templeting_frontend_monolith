@@ -12,6 +12,7 @@ implementasi serta bahan pemaparan KP dengan bukti kode yang dapat diverifikasi.
 - [Fitur Utama](#-fitur-utama)
 - [Stack & Dependensi](#-stack--dependensi)
 - [Standar Industri](#-standar-industri-yang-diterapkan)
+- [Cakupan Standar per Halaman](#-cakupan-standar-per-halaman)
 - [Cara Install](#-cara-install)
 - [Kredensial Default](#-kredensial-default)
 - [Screenshot](#-screenshot)
@@ -20,6 +21,7 @@ implementasi serta bahan pemaparan KP dengan bukti kode yang dapat diverifikasi.
 - [Skema Database](#-skema-database)
 - [Cara Test](#-cara-test)
 - [Roadmap](#-roadmap)
+- [Known Issues](#️-known-issues)
 - [Dokumentasi Lain](#-dokumentasi-lain)
 - [Lisensi](#-lisensi)
 - [Author](#-author)
@@ -33,7 +35,9 @@ implementasi serta bahan pemaparan KP dengan bukti kode yang dapat diverifikasi.
 - CRUD Berita & Kegiatan dengan soft delete dan pagination.
 - Slug otomatis, status draft/published, dan empty state.
 - Validasi form dengan feedback error per field.
-- Implementasi WAI-ARIA pada bagian layout, form, dan tabel yang sudah diaudit.
+- Landing page publik dengan CUBE CSS dan design tokens.
+- Modal profil dengan WAI-ARIA (`role="dialog"`, focus trap, `aria-invalid`).
+- Asset custom: `tokens.css`, `app.css`, `admin.css`, dan `app.js` modular.
 
 ## 🏗️ Stack & Dependensi
 
@@ -44,6 +48,8 @@ implementasi serta bahan pemaparan KP dengan bukti kode yang dapat diverifikasi.
 | MySQL | via XAMPP atau server MySQL lain |
 | Bootstrap | 5, asset lokal |
 | Font Awesome | asset lokal |
+| Custom CSS | `tokens.css` + `app.css` + `admin.css` |
+| Custom JS | `app.js` (IIFE namespace `App`) |
 
 Dependensi utama dari `composer.json` adalah `codeigniter4/framework: ^4.7`,
 PHP `^8.2`, PHPUnit `^10.5.16`, Faker, dan VFS Stream. Environment proyek saat ini
@@ -51,266 +57,274 @@ menggunakan PHP 8.5.
 
 ## 📐 Standar Industri yang Diterapkan
 
-Acuan utama bagian ini adalah [docs/AUDIT-STANDARDS.md](docs/AUDIT-STANDARDS.md).
-Status berikut mengikuti bukti aktual, bukan asumsi target masa depan.
-
-| # | Ahli | Standar | Status | Bukti Utama |
-|---|------|---------|--------|-------------|
-| 1 | Brad Frost | Atomic Design | ⚠️ Sebagian | [layout/main.php:1-3](app/Views/layout/main.php#L1-L3), shell reusable tanpa components |
-| 2 | Andy Bell | CUBE CSS | ❌ Belum | [login.php:10-171](app/Views/auth/login.php#L10-L171), CSS inline tanpa token |
-| 3 | Heydon Pickering | Inclusive Components | ⚠️ Sebagian | [berita/form.php:34-122](app/Views/admin/berita/form.php#L34-L122), label/error sudah ada |
-| 4 | Addy Osmani | JS Design Patterns | ❌ Belum | [admin_header.php:198-213](app/Views/layout/admin_header.php#L198-L213), script inline |
-| 5 | Vitaly Friedman | UX States | ⚠️ Sebagian | [berita/index.php:37-51](app/Views/admin/berita/index.php#L37-L51), empty state ada |
-| 6 | Lonnie Ezell | CI4 View Cells | ❌ Belum | [main.php:1-3](app/Views/layout/main.php#L1-L3), include/renderSection |
-| 7 | Scott O'Hara & Steve Faulkner | WAI-ARIA | ⚠️ Sebagian | [header.php:11-60](app/Views/layout/header.php#L11-L60), atribut ARIA parsial |
-| 8 | Standar HTML | Semantic HTML5 | ⚠️ Sebagian | [header.php:13-60](app/Views/layout/header.php#L13-L60), nav/aside/main tersedia |
-
-Status: ✅ Penuh · ⚠️ Sebagian · ❌ Belum
+| # | Ahli | Standar | Status |
+|---|------|---------|--------|
+| 1 | Brad Frost | Atomic Design | ✅ Landing + Modal |
+| 2 | Andy Bell | CUBE CSS | ✅ `tokens.css` + `app.css` + `admin.css` |
+| 3 | Heydon Pickering | Inclusive Components | ✅ Landing + Modal |
+| 4 | Addy Osmani | JS Design Patterns | ✅ IIFE namespace `App` |
+| 5 | Vitaly Friedman | UX States | ✅ Landing (empty/error) |
+| 6 | Lonnie Ezell | CI4 View Cells | ❌ Belum (out of scope) |
+| 7 | Scott O'Hara & Steve Faulkner | WAI-ARIA | ✅ Landing + Modal |
+| 8 | HTML5 Spec | Semantic HTML | ✅ Landing |
 
 ### 1. Brad Frost — Atomic Design
 
 **Filosofi**: Atomic Design menyusun UI dari unit kecil reusable menjadi molecule,
 organism, template, dan page agar konsistensi serta pemeliharaan meningkat.
-**Status**: ⚠️ Sebagian
+
+**Status**: ✅ Landing + Modal Profil
+
 **Bukti di kode**:
 
-- [app/Views/layout/main.php:1-3](app/Views/layout/main.php#L1-L3) memakai shell layout bersama.
-- [app/Views/layout/header.php:13-65](app/Views/layout/header.php#L13-L65) memusatkan navbar/sidebar.
-- [app/Views/admin/berita/index.php:20-118](app/Views/admin/berita/index.php#L20-L118) masih menulis alert, badge, empty state, dan table action langsung.
+- [app/Views/components/_navbar-public.php](app/Views/components/_navbar-public.php) — organisme navigasi publik.
+- [app/Views/components/_hero.php](app/Views/components/_hero.php) — organisme hero landing.
+- [app/Views/components/_feature-card.php](app/Views/components/_feature-card.php) — molecule feature card dengan parameter eksplisit.
+- [app/Views/components/_footer-public.php](app/Views/components/_footer-public.php) — organisme footer publik.
+- [app/Views/components/_modal.php](app/Views/components/_modal.php) — organism modal reusable dengan parameter.
+- [app/Views/home.php](app/Views/home.php) — page standalone merangkai komponen.
+- [app/Views/layout/main.php](app/Views/layout/main.php) — shell layout bersama.
 
 **Contoh kode**:
 
 ```php
-<?= $this->include('layout/header') ?>
-<?= $this->renderSection('content') ?>
-<?= $this->include('layout/footer') ?>
-
+<?= $this->include('components/_navbar-public') ?>
+<?= $this->include('components/_hero') ?>
+<section id="features" class="section">
+  <?= $this->include('components/_feature-card', $item) ?>
+</section>
+<?= $this->include('components/_footer-public') ?>
 ```
 
-**Gap & rekomendasi**:
+**Sisa pekerjaan (out of scope)**:
 
-- Belum ada `app/Views/components/` atau partial `_*.php`.
-- Ekstrak alert, status badge, empty state, pagination, dan form field.
-- Konsolidasikan `header.php` dan `admin_header.php` menjadi satu shell.
+- Ekstrak alert, badge, empty state, dan pagination admin ke `components/`.
+- Konsolidasikan `header.php` dan `admin_header.php` (sisa SSIP).
 
 ### 2. Andy Bell — CUBE CSS
 
 **Filosofi**: CUBE CSS memisahkan Composition, Utility, Block, dan Exception,
 didukung token visual agar CSS tetap terukur dan konsisten.
-**Status**: ❌ Belum
+
+**Status**: ✅ Landing + Modal
+
 **Bukti di kode**:
 
-- [app/Views/auth/login.php:10-171](app/Views/auth/login.php#L10-L171) memiliki blok `<style>` besar.
-- [app/Views/layout/admin_header.php:13-131](app/Views/layout/admin_header.php#L13-L131) juga memiliki CSS inline.
-- [app/Views/auth/login.php:223](app/Views/auth/login.php#L223) memiliki inline style.
+- [public/assets/css/tokens.css](public/assets/css/tokens.css) — seluruh design tokens (`--color-*`, `--space-*`, `--font-*`, `--radius-*`, `--shadow-*`).
+- [public/assets/css/app.css](public/assets/css/app.css) — Composition (`.container`, `.grid`, `.section`), Utility (`.sr-only`, `.text-center`), Block (`.hero`, `.feature-card`, `.site-footer`, `.btn`), Exception (media queries).
+- [public/assets/css/admin.css](public/assets/css/admin.css) — Block modal, form field, alert, breadcrumb.
+- [app/Views/layout/header.php](app/Views/layout/header.php) — load ketiga stylesheet dengan urutan yang benar.
 
 **Contoh kode**:
 
 ```css
-.auth-left {
-    background: #002366;
-    color: white;
+:root {
+  --color-primary: #2563eb;
+  --space-4: 1rem;
+  --radius-md: 0.5rem;
 }
-
+.feature-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
 ```
 
-**Gap & rekomendasi**:
+**Sisa pekerjaan**:
 
-- Tidak ada CSS variables untuk warna, spacing, radius, typography, atau z-index.
-- Pindahkan CSS ke `public/assets/css/app.css` dan tambahkan token `:root`.
-- Gunakan Bootstrap utilities untuk layout umum dan CSS custom untuk block khusus.
+- Migrasi styling admin lama (`admin_header.php` inline CSS) ke `admin.css`.
+- Ganti Bootstrap utility pada layout admin dengan CUBE utility.
 
 ### 3. Heydon Pickering — Inclusive Components
 
 **Filosofi**: Komponen harus dapat dipahami dan digunakan oleh berbagai pengguna,
 termasuk pengguna keyboard dan assistive technology, sejak tahap desain.
-**Status**: ⚠️ Sebagian
+
+**Status**: ✅ Landing + Modal
+
 **Bukti di kode**:
 
-- [app/Views/auth/login.php:199-244](app/Views/auth/login.php#L199-L244) memiliki label/id, required, autocomplete, autofocus, dan error.
-- [app/Views/admin/berita/form.php:34-122](app/Views/admin/berita/form.php#L34-L122) memakai `aria-describedby` dan `role="alert"`.
-- [app/Views/layout/header.php:11](app/Views/layout/header.php#L11) memiliki skip-link.
+- [app/Views/components/_navbar-public.php](app/Views/components/_navbar-public.php) — tombol hamburger dengan `aria-expanded` dan `aria-controls`.
+- [app/Views/components/_modal.php](app/Views/components/_modal.php) — dialog dengan `role="dialog"`, `aria-modal`, label, dan tombol close.
+- [public/assets/js/app.js](public/assets/js/app.js) — focus trap, Escape, backdrop click, focus restore ke trigger.
+- [app/Views/auth/profile.php](app/Views/auth/profile.php) — field dengan `aria-describedby`, `aria-invalid`, dan `aria-live="polite"`.
 
 **Contoh kode**:
 
 ```php
-<label for="judul" class="form-label">Judul</label>
-<input type="text" id="judul" name="judul"
-       class="form-control<?= $fieldError('judul') ? ' is-invalid' : '' ?>"
-       maxlength="200" required aria-describedby="judul-error">
-
+<div role="dialog" aria-modal="true" aria-labelledby="editProfileModal-title">
+  <button data-modal-close aria-label="Tutup dialog">
+    <i class="fas fa-times" aria-hidden="true"></i>
+  </button>
+</div>
 ```
-
-**Gap & rekomendasi**:
-
-- Modal profile dan example belum memiliki `role="dialog"`.
-- Audit focus management dan keyboard behavior pada modal.
-- Lengkapi atribut A11y pada layout lama `admin_header.php` atau konsolidasikan file itu.
 
 ### 4. Addy Osmani — JS Design Patterns
 
 **Filosofi**: Behavior dipisahkan dari markup menggunakan modul atau namespace yang
 jelas, event listener terpusat, dan lifecycle yang dapat diuji.
-**Status**: ❌ Belum
+
+**Status**: ✅ Landing + Modal
+
 **Bukti di kode**:
 
-- [app/Views/layout/admin_header.php:198-213](app/Views/layout/admin_header.php#L198-L213) berisi script sidebar inline.
-- [app/Views/admin/berita/index.php:98](app/Views/admin/berita/index.php#L98) menggunakan inline `onsubmit`.
-- Tidak ada file JS aplikasi; asset JS yang tersedia adalah vendor Bootstrap.
+- [public/assets/js/app.js](public/assets/js/app.js) — IIFE dengan namespace `App`.
+- Module: `Navbar`, `SmoothScroll`, `Modal` — masing-masing dengan `init()`.
+- Event delegation terpusat di `document.addEventListener`.
 
 **Contoh kode**:
 
-```html
-<form method="post"
-      onsubmit="return confirm('Yakin ingin menghapus berita ini?');">
-    <?= csrf_field() ?>
-    <button type="submit" class="btn btn-sm btn-outline-danger">
-        <i class="fas fa-trash" aria-hidden="true"></i>
-    </button>
-</form>
-
+```javascript
+(function () {
+  "use strict";
+  const Modal = {
+    open(id) { /* ... */ },
+    close(id) { /* ... */ },
+    trapFocus(e) { /* ... */ },
+    init() { /* event delegation */ },
+  };
+  const App = {
+    init() { Modal.init(); Navbar.init(); },
+  };
+  App.init();
+})();
 ```
 
-**Gap & rekomendasi**:
+**Sisa pekerjaan**:
 
-- Buat `public/assets/js/app.js` atau modul per fitur.
-- Pindahkan confirm delete dan loading submit ke event listener.
-- Pertahankan progressive enhancement agar form tetap bekerja tanpa JS.
+- Pecah ke `modules/*.js` jika file bertambah besar.
+- Ganti `onsubmit="return confirm(...)"` di `berita/index.php` dengan module `Confirm`.
 
 ### 5. Vitaly Friedman — UX States
 
 **Filosofi**: UI perlu menjelaskan kondisi kosong, memuat, berhasil, dan gagal agar
 pengguna selalu memahami hasil atau status aksinya.
-**Status**: ⚠️ Sebagian
+
+**Status**: ✅ Landing + sebagian admin
+
 **Bukti di kode**:
 
-- [app/Views/admin/berita/index.php:37-51](app/Views/admin/berita/index.php#L37-L51) memiliki empty state dan CTA.
-- [app/Views/admin/berita/index.php:21-35](app/Views/admin/berita/index.php#L21-L35) memiliki success/error/validation alert.
-- [app/Views/admin/berita/form.php:21-31](app/Views/admin/berita/form.php#L21-L31) memiliki global error.
-- [app/Views/admin/example/index.php:23-25](app/Views/admin/example/index.php#L23-L25) memiliki empty row.
+- [app/Views/home.php](app/Views/home.php) — CTA jelas, feature cards dengan hover state.
+- [app/Views/admin/berita/index.php](app/Views/admin/berita/index.php) — empty state dengan CTA, alert success/error/validation.
+- [app/Views/auth/profile.php](app/Views/auth/profile.php) — `aria-live="polite"` untuk status submit, error per field.
 
 **Contoh kode**:
 
 ```php
 <?php if (empty($beritaRows)): ?>
-    <div class="text-center py-5">
-        <i class="fas fa-newspaper fa-3x text-muted mb-3" aria-hidden="true"></i>
-        <h2 class="h5">Belum ada berita</h2>
-        <a href="<?= base_url('admin/berita/create') ?>" class="btn btn-primary">
-            Tambah Berita Pertama
-        </a>
-    </div>
+  <div class="text-center py-5">
+    <i class="fas fa-newspaper fa-3x text-muted mb-3" aria-hidden="true"></i>
+    <h2 class="h5">Belum ada berita</h2>
+    <a href="<?= base_url('admin/berita/create') ?>" class="btn btn--primary">
+      Tambah Berita Pertama
+    </a>
+  </div>
 <?php endif; ?>
-
 ```
 
-**Gap & rekomendasi**:
+**Sisa pekerjaan**:
 
-- Loading state belum tersedia pada submit, tabel, pagination, atau navigasi.
-- `example/index.php` belum konsisten menampilkan error state.
-- Standarkan alert/empty state sebagai partial dan tambahkan disabled/loading submit.
+- Loading state pada submit form dan pagination.
+- Error state konsisten di `example/index.php`.
 
 ### 6. Lonnie Ezell — CI4 View Cells
 
 **Filosofi**: View Cells cocok untuk komponen view yang perlu menyiapkan data dan
 markup berulang, sehingga controller serta halaman tetap fokus pada konteks.
-**Status**: ❌ Belum
+
+**Status**: ❌ Belum (out of scope)
+
 **Bukti di kode**:
 
-- [app/Views/layout/main.php:1-3](app/Views/layout/main.php#L1-L3) memakai include dan render section.
-- [app/Views/layout/header.php:1-65](app/Views/layout/header.php#L1-L65) menempatkan shell langsung di view.
-- Inventaris audit tidak menemukan `components/` atau partial `_*.php`.
+- Partial sudah ada di `app/Views/components/`, tapi masih memakai `$this->include()`.
+- Belum ada `app/Cells/`.
 
-**Contoh kode**:
+**Rekomendasi**:
 
-```php
-<?= $this->include('layout/header') ?>
-<?= $this->renderSection('content') ?>
-<?= $this->include('layout/footer') ?>
-
-```
-
-**Gap & rekomendasi**:
-
-- Tidak ada View Cell atau partial reusable bernama `_xxx.php`.
-- Gunakan partial untuk alert, badge, empty state, dan pagination.
-- Evaluasi View Cell untuk user menu atau summary yang membutuhkan data berulang.
+- Konversi `_feature-card.php` menjadi `app/Cells/FeatureCardCell.php`.
+- Evaluasi View Cell untuk menu user atau statistik dashboard.
 
 ### 7. Scott O'Hara & Steve Faulkner — WAI-ARIA
 
 **Filosofi**: ARIA melengkapi HTML native untuk status, hubungan field-error,
 navigasi, dan widget interaktif. ARIA harus mendukung behavior nyata.
-**Status**: ⚠️ Sebagian
+
+**Status**: ✅ Landing + Modal
+
 **Bukti di kode**:
 
-- [app/Views/layout/header.php:11-60](app/Views/layout/header.php#L11-L60) memiliki skip-link, nav label, dropdown state, `aria-hidden`, dan `aria-current`.
-- [app/Views/admin/berita/index.php:60-69](app/Views/admin/berita/index.php#L60-L69) memakai `scope="col"`.
-- [app/Views/admin/berita/form.php:34-122](app/Views/admin/berita/form.php#L34-L122) memakai `aria-describedby` dan `role="alert"`.
+- [app/Views/home.php](app/Views/home.php) — skip-link, landmark (`header`/`main`/`footer`), `aria-labelledby` per section.
+- [app/Views/components/_modal.php](app/Views/components/_modal.php) — `role="dialog"`, `aria-modal`, `aria-hidden` toggle.
+- [app/Views/auth/profile.php](app/Views/auth/profile.php) — `aria-describedby` per field, `aria-invalid` saat error, `role="alert"` untuk pesan error.
+- [app/Views/layout/header.php](app/Views/layout/header.php) — skip-link, nav label, dropdown state, `aria-current`.
 
 **Contoh kode**:
 
 ```php
-<nav aria-label="Navigasi admin">
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link" href="<?= base_url('admin/berita') ?>">
-                <i class="fas fa-newspaper me-2" aria-hidden="true"></i>
-                <span>Berita &amp; Kegiatan</span>
-            </a>
-        </li>
-    </ul>
-</nav>
-
+<label for="nama" class="form-field__label">Nama</label>
+<input
+  type="text"
+  id="nama"
+  name="nama"
+  class="form-field__input"
+  aria-describedby="nama-hint nama-error"
+  aria-invalid="<?= $validation->hasError('nama') ? 'true' : 'false' ?>"
+>
+<span id="nama-error" class="form-field__error" role="alert">
+  <?= $validation->getError('nama') ?>
+</span>
 ```
-
-**Gap & rekomendasi**:
-
-- Modal profile dan example belum memiliki `role="dialog"`.
-- Tombol delete icon-only pada example belum memiliki `aria-label`.
-- Audit keyboard/focus dan konsolidasikan `admin_header.php`.
 
 ### 8. Standar HTML5 — Semantic HTML
 
 **Filosofi**: Semantic HTML memakai elemen sesuai makna agar struktur dokumen,
 landmark, heading, navigasi, form, dan tabel mudah dipahami browser serta assistive technology.
-**Status**: ⚠️ Sebagian
+
+**Status**: ✅ Landing
+
 **Bukti di kode**:
 
-- [app/Views/layout/header.php:13-60](app/Views/layout/header.php#L13-L60) memiliki nav, aside, dan main.
-- [app/Views/admin/berita/index.php:58-72](app/Views/admin/berita/index.php#L58-L72) memiliki table/thead/tbody dan scope.
-- [app/Views/admin/dashboard.php:5-9](app/Views/admin/dashboard.php#L5-L9) memiliki h1 lalu h2.
-- [app/Views/auth/login.php:188-189](app/Views/auth/login.php#L188-L189) memiliki h1 lalu h2.
+- [app/Views/home.php](app/Views/home.php) — `header`, `main`, `section` dengan `aria-labelledby`, `article` per feature card, `footer`.
+- [app/Views/components/_hero.php](app/Views/components/_hero.php) — `<section aria-labelledby>` dengan `h1`.
+- [app/Views/components/_feature-card.php](app/Views/components/_feature-card.php) — `<article aria-label>` dengan `h3`.
 
 **Contoh kode**:
 
-```php
-<aside aria-label="Menu utama">
-    <nav aria-label="Navigasi admin">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="<?= base_url('admin/berita') ?>">
-                    Berita &amp; Kegiatan
-                </a>
-            </li>
-        </ul>
-    </nav>
-</aside>
-<main id="main" class="col-md-10 py-3">
-
+```html
+<main id="main-content">
+  <section id="features" class="section" aria-labelledby="features-heading">
+    <h2 id="features-heading" class="section__title">Fitur Unggulan</h2>
+    <article class="feature-card" aria-label="Atomic Design">
+      <h3 class="feature-card__title">Atomic Design</h3>
+    </article>
+  </section>
+</main>
 ```
 
-**Gap & rekomendasi**:
+**Sisa pekerjaan**:
 
-- Shell aktif belum membungkus navbar dengan `<header>` dan belum memiliki `<footer>`.
-- `<main>` dibuka di `header.php` dan ditutup oleh `footer.php`.
-- `auth/profile.php` memulai heading visual dari h4 tanpa h1.
-- Pastikan setiap halaman memiliki satu h1 dan heading berurutan.
+- Audit heading hierarchy di `auth/profile.php` (masih mulai dari h4).
+- Bungkus navbar admin lama dengan `<header>`.
+
+## 📊 Cakupan Standar per Halaman
+
+| Halaman | Atomic | CUBE | JS | WAI-ARIA | Semantic | UX States |
+|---------|:---:|:---:|:---:|:---:|:---:|:---:|
+| Landing (`app/Views/home.php`) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Modal Profil (`app/Views/components/_modal.php`) | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ |
+| Login (`app/Views/auth/login.php`) | ⚠️ | ⚠️ | ❌ | ⚠️ | ⚠️ | ⚠️ |
+| Dashboard (`app/Views/admin/dashboard.php`) | ⚠️ | ⚠️ | ❌ | ⚠️ | ⚠️ | ❌ |
+| Berita List (`app/Views/admin/berita/index.php`) | ⚠️ | ⚠️ | ❌ | ⚠️ | ⚠️ | ✅ |
+| Berita Form (`app/Views/admin/berita/form.php`) | ⚠️ | ⚠️ | ❌ | ⚠️ | ⚠️ | ⚠️ |
+| Layout Admin (`app/Views/layout/header.php`) | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ❌ |
+
+**Legenda:** ✅ diterapkan penuh · ⚠️ sebagian · ❌ belum
 
 ## 🚀 Cara Install
 
 ### Prasyarat
 
-- PHP >= 8.5
+- PHP >= 8.2 (development memakai 8.5)
 - Composer
 - MySQL via XAMPP, Laragon, atau instalasi manual
 - Extensions CodeIgniter seperti `intl`, `mbstring`, dan `mysqli`
@@ -325,11 +339,12 @@ cp env .env
 mysql -u root -e "CREATE DATABASE intellimart_template"
 php spark migrate
 php spark serve --port 8081
-
 ```
 
 Edit `.env` setelah menyalin file `env` untuk menyesuaikan `app.baseURL` dan
-`database.default.*`. Repository menyediakan `env`, bukan `.env.example`.
+`database.default.*`. Repository menyediakan `env` di root project.
+
+**Penting**: pastikan `app.indexPage` di `.env` diset kosong (`app.indexPage = ''`) agar URL bersih tanpa `/index.php`.
 
 ## 🔑 Kredensial Default
 
@@ -344,17 +359,18 @@ Gunakan credential tersebut hanya untuk development/testing lokal.
 
 Screenshot aktual belum disertakan. Placeholder:
 
+- [Landing page](docs/screenshots/00-landing.png)
 - [Login page](docs/screenshots/01-login.png)
 - [Dashboard profile](docs/screenshots/02-dashboard-profile.png)
 - [List berita empty](docs/screenshots/03-berita-empty.png)
 - [List berita berisi data](docs/screenshots/04-berita-list.png)
 - [Form create/edit](docs/screenshots/05-berita-form.png)
+- [Modal profile](docs/screenshots/06-modal-profile.png)
 
 Embed setelah gambar tersedia:
 
 ```markdown
-![Login page](docs/screenshots/01-login.png)
-
+![Landing page](docs/screenshots/00-landing.png)
 ```
 
 ## 📂 Struktur Folder
@@ -366,22 +382,61 @@ app/
 ├── Controllers/
 │   ├── AuthController.php
 │   ├── BeritaController.php
-│   └── DashboardController.php
+│   ├── DashboardController.php
+│   ├── ExampleController.php
+│   └── Home.php
 ├── Database/Migrations/
+│   ├── 2025-07-24-193451_CreateRoles.php
+│   ├── 2025-07-24-193452_CreateUsers.php
+│   ├── 2026-07-30-043359_RolePermissions.php
+│   ├── 2026-09-15-105213_CreateExamplesTable.php
 │   └── 2026-09-15-220000_CreateBeritaTable.php
+├── Filters/
+│   ├── AuthFilter.php
+│   ├── AdminFilter.php
+│   ├── RoleFilter.php
+│   ├── PermissionFilter.php
+│   └── ThrottleFilter.php
 ├── Models/
 │   ├── BeritaModel.php
 │   ├── RoleModel.php
-│   └── UserModel.php
+│   ├── RolePermissionModel.php
+│   ├── UserModel.php
+│   └── ExampleModel.php
 └── Views/
-    ├── admin/berita/{index.php,form.php}
-    ├── admin/dashboard.php
-    ├── auth/{login.php,profile.php}
-    └── layout/{header.php,main.php,footer.php}
+    ├── components/
+    │   ├── _navbar-public.php
+    │   ├── _hero.php
+    │   ├── _feature-card.php
+    │   ├── _footer-public.php
+    │   └── _modal.php
+    ├── layout/
+    │   ├── header.php
+    │   ├── footer.php
+    │   └── main.php
+    ├── admin/
+    │   ├── dashboard.php
+    │   ├── berita/{index.php,form.php}
+    │   └── example/index.php
+    ├── auth/
+    │   ├── login.php
+    │   └── profile.php
+    └── home.php
+
+public/assets/
+├── bootstrap/         # v5 lokal
+├── fontawesome/       # lokal
+├── css/
+│   ├── tokens.css
+│   ├── app.css
+│   └── admin.css
+└── js/
+    └── app.js
+
 docs/
 ├── AUDIT-STANDARDS.md
-└── ui-extraction/
-
+├── ui-extraction/
+└── screenshots/
 ```
 
 ## 🗺️ Daftar Route
@@ -409,18 +464,21 @@ Route dalam group `admin` menggunakan filter `auth`.
 | POST | `/admin/berita/update/(:num)` | `BeritaController::update/$1` | auth |
 | POST | `/admin/berita/delete/(:num)` | `BeritaController::delete/$1` | auth |
 
+> **Catatan:** Route `/logout` saat ini memakai method GET. Best practice POST + CSRF
+> direncanakan sebagai perbaikan.
+
 ## 🗃️ Skema Database
 
 ### Tabel `users`
 
-- `id`, `nomor`, `nama`, `no_telp`, `jurusan`, `role_id`, `password`.
-- `created_at`, `updated_at`.
+- `id`, `nomor`, `nama`, `no_telp`, `jurusan`, `role_id`, `password`
+- `created_at`, `updated_at`
 
-Bukti: [app/Models/UserModel.php:8-16](app/Models/UserModel.php#L8-L16).
+Bukti: [app/Models/UserModel.php](app/Models/UserModel.php).
 
 ### Tabel `roles`
 
-- `id`, `role_name`, `created_at`, `updated_at`.
+- `id`, `role_name`, `created_at`, `updated_at`
 
 ### Tabel `role_permissions`
 
@@ -429,10 +487,10 @@ Bukti: [app/Models/UserModel.php:8-16](app/Models/UserModel.php#L8-L16).
 
 ### Tabel `berita`
 
-- `id`, `judul`, `slug`, `konten`, `kategori`, `gambar`, `status`.
-- `penulis_id`, `published_at`, `created_at`, `updated_at`, `deleted_at`.
+- `id`, `judul`, `slug`, `konten`, `kategori`, `gambar`, `status`
+- `penulis_id`, `published_at`, `created_at`, `updated_at`, `deleted_at`
 
-Bukti: [app/Models/BeritaModel.php:8-42](app/Models/BeritaModel.php#L8-L42).
+Bukti: [app/Models/BeritaModel.php](app/Models/BeritaModel.php).
 
 ### Validasi Berita
 
@@ -443,7 +501,6 @@ protected $validationRules = [
     'konten' => 'required|min_length[10]',
     'status' => 'required|in_list[draft,published]',
 ];
-
 ```
 
 ## 🧪 Cara Test
@@ -455,21 +512,25 @@ php -l app/Controllers/BeritaController.php
 php -l app/Models/BeritaModel.php
 php -l app/Views/admin/berita/index.php
 php -l app/Views/admin/berita/form.php
+node --check public/assets/js/app.js
 composer test
-
 ```
 
 Checklist manual:
 
 - [ ] Login dengan nomor `admin` dan password development.
+- [ ] Landing page tampil di `/` saat belum login.
+- [ ] Setelah login, `/` redirect ke `/admin/dashboard`.
 - [ ] Dashboard menampilkan user dan role.
-- [ ] Edit profile, ubah `no_telp`, lalu simpan.
+- [ ] Edit profile via modal — focus trap, Escape, backdrop click berfungsi.
+- [ ] Submit form dengan data invalid — error tampil dengan `aria-invalid`.
 - [ ] Logout kembali ke `/login`.
 - [ ] Empty state muncul di `/admin/berita` saat belum ada data.
 - [ ] Create berita draft berhasil dan muncul di list.
 - [ ] Edit berita menjadi `published` mengisi `published_at`.
 - [ ] Delete berita memakai konfirmasi, POST, CSRF, dan soft delete.
 - [ ] Pagination dan keyboard tab navigation berjalan.
+- [ ] Skip-link aktif saat Tab pertama di landing page.
 
 ## 🛠️ Roadmap
 
@@ -477,13 +538,27 @@ Checklist manual:
 - ☑ Migration dan model Berita
 - ☑ Layout admin, login, dan dashboard profile
 - ☑ CRUD Berita end-to-end
-- □ Atomic Design: components dan partial reusable
-- □ CUBE CSS: design tokens dan stylesheet aplikasi
-- □ Modular JS: `app.js` dan `modules/*`
-- □ Audit A11y lanjutan untuk modal dan focus
+- ☑ Landing page publik dengan CUBE CSS + design tokens
+- ☑ Atomic Design: components dan partial reusable
+- ☑ CUBE CSS: design tokens dan stylesheet aplikasi
+- ☑ Modular JS: `app.js` dengan IIFE namespace `App`
+- ☑ Audit A11y untuk modal (`role="dialog"` + focus trap)
+- □ Layout admin refactor (sidebar/navbar/breadcrumb CUBE)
+- □ Berita CRUD polish (a11y tabel & form)
 - □ Loading state untuk form/tabel/submit
+- □ CI4 View Cells
 - □ File upload gambar berita
 - □ User management CRUD
+- □ Screenshot 10 halaman untuk laporan KP
+
+## ⚠️ Known Issues
+
+- Tombol logout di navbar admin sedang dalam perbaikan. Route `POST /logout` masih berfungsi via form.
+- `app.js` dimuat via section `scripts` di `profile.php`, belum global di `footer.php`.
+- Focus awal modal masuk ke tombol close (idealnya ke input pertama).
+- Route `/logout` masih memakai method GET, belum POST + CSRF.
+- Nama folder `templeting_frontend_monolith_CI` typo (seharusnya `templating`) — kosmetik.
+- `app/Views/layout/admin_header.php` masih ada (sisa SSIP), tidak dipakai.
 
 ## 📄 Dokumentasi Lain
 
