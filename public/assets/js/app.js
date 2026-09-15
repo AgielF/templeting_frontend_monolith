@@ -58,9 +58,9 @@
             modal.classList.add('is-open');
             modal.setAttribute('aria-hidden', 'false');
 
-            const focusable = modal.querySelector(
-                'input:not([type="hidden"]), button:not([disabled]), [href], select, textarea'
-            );
+            const focusable = modal.querySelector('input:not([type="hidden"]):not([disabled])')
+                || modal.querySelector('textarea, select')
+                || modal.querySelector('button:not([disabled]), [href]');
             if (focusable) {
                 focusable.focus();
             }
