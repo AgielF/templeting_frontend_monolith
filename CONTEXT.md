@@ -36,4 +36,11 @@ Perubahan dibuat kecil per fase dan setiap fase memiliki commit terpisah. RBAC y
 
 ## Status Progress
 
-Login dan dashboard sudah OK. CRUD belum diuji manual. Fase 1-5 belum mulai.
+- ✅ Baseline + RBAC + migration Berita
+- ✅ Layout admin (navbar profile+logout, sidebar Berita & Kegiatan)
+- ✅ Login page UI SSIP (field nomor)
+- ✅ Dashboard profile + route /admin/profile
+- ✅ Modul Berita end-to-end: migration, model, controller, list view, form CRUD
+- ✅ Push ke GitHub: https://github.com/AgielF/templeting_frontend_monolith
+- ⏳ Standar ahli penuh (A11y audit, CUBE CSS tokens, modular JS) — opsional
+- ⏳ File upload gambar berita — opsional
