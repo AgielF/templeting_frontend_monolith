@@ -6,6 +6,7 @@ $routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::attemptLogin');
 $routes->get('logout', 'AuthController::logout');
 $routes->group('admin', ['filter' => 'auth'], function ($routes) {
+    $routes->get('', 'DashboardController::index');
     $routes->get('dashboard', 'DashboardController::index');
     $routes->get('example', 'ExampleController::index');
     $routes->post('example/store', 'ExampleController::store');

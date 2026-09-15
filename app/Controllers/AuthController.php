@@ -8,6 +8,10 @@ class AuthController extends BaseController
 {
     public function login()
     {
+        if (session('user')) {
+            return redirect()->to('/admin/dashboard');
+        }
+
         return view('auth/login', ['title' => 'Login']);
     }
 
