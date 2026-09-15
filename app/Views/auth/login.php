@@ -2,16 +2,11 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Login | Sistem Informasi SKK</title>
-    <!-- Favicon Logo Lab -->
-    <link rel="icon" type="image/jpeg" href="<?= base_url('assets/images/GambarLogo.jpg') ?>">
+    <title><?= esc($title ?? 'Login Admin') ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Font -->
-    <link href="<?= base_url('assets/vendor/inter/index.css') ?>" rel="stylesheet">
-
-    <!-- Icon -->
-    <link rel="stylesheet" href="<?= base_url('assets/vendor/fontawesome/css/all.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/bootstrap/css/bootstrap.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/fontawesome/css/all.min.css') ?>">
 
     <style>
         * {
@@ -192,36 +187,50 @@
     <div class="auth-left">
         <div class="login-box">
 
-            <h2>Admin Panel</h2>
-            <h3>Informatika</h3>
+            <h1>Admin Panel</h1>
+            <h2>Login Admin</h2>
 
             <!-- ALERT ERROR -->
             <?php if (session()->getFlashdata('error')): ?>
-                <div class="alert-error">
-                    <i class="fas fa-circle-exclamation"></i>
-                    <?= session()->getFlashdata('error') ?>
+                <div class="alert-error" role="alert">
+                    <i class="fas fa-circle-exclamation" aria-hidden="true"></i>
+                    <?= esc(session()->getFlashdata('error')) ?>
                 </div>
             <?php endif; ?>
 
-            <form action="<?= base_url('login') ?>" method="post">
+            <?php $validationError = isset($validation) ? $validation->getError('nomor') : ($errors['nomor'] ?? ''); ?>
+            <form action="<?= base_url('login') ?>" method="post" aria-label="Form login admin">
                 <?= csrf_field() ?>
 
                 <div class="input-field">
-                    <i class="fas fa-user"></i>
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    <label for="nomor" class="visually-hidden">Nomor</label>
                     <input
                         type="text"
+                        id="nomor"
                         name="nomor"
                         placeholder="NIM / Username"
-                        value="<?= old('nomor') ?>"
+                        value="<?= esc(old('nomor')) ?>"
+                        autocomplete="username"
+                        aria-describedby="nomor-error"
+                        autofocus
                         required>
                 </div>
+                <?php if ($validationError): ?>
+                    <div id="nomor-error" class="text-warning small mb-2" role="alert">
+                        <?= esc($validationError) ?>
+                    </div>
+                <?php endif; ?>
 
                 <div class="input-field">
-                    <i class="fas fa-lock"></i>
+                    <i class="fas fa-lock" aria-hidden="true"></i>
+                    <label for="password" class="visually-hidden">Password</label>
                     <input
                         type="password"
+                        id="password"
                         name="password"
                         placeholder="Password"
+                        autocomplete="current-password"
                         required>
                 </div>
 
@@ -234,7 +243,7 @@
             <!-- BACK TO HOME LINK -->
             <div style="margin-top: 20px;">
                 <a href="/" class="back-link">
-                    <i class="fas fa-arrow-left"></i>
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
                     Kembali ke Homepage
                 </a>
             </div>
@@ -244,9 +253,9 @@
 
     <!-- RIGHT -->
     <div class="auth-right">
-        <img src="<?= base_url('assets/images/GambarLogo.jpg') ?>"
-             alt="Logo Admin Panel"
-             class="main-logo">
+        <div class="main-logo text-center" aria-hidden="true">
+            <i class="fas fa-layer-group fa-5x text-primary"></i>
+        </div>
     </div>
 
 </div>
