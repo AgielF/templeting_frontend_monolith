@@ -10,6 +10,6 @@ class Home extends BaseController
             return redirect()->to('/admin/dashboard');
         }
 
-        return redirect()->to('/login');
+        return view('home');
     }
 }
