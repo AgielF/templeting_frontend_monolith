@@ -20,6 +20,6 @@ $routes->group('admin', ['filter' => 'auth'], function ($routes) {
         $routes->post('store', 'BeritaController::store');
         $routes->get('edit/(:num)', 'BeritaController::edit/$1');
         $routes->post('update/(:num)', 'BeritaController::update/$1');
-        $routes->get('delete/(:num)', 'BeritaController::delete/$1');
+        $routes->post('delete/(:num)', 'BeritaController::delete/$1');
     });
 });

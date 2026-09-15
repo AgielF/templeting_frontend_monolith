@@ -25,7 +25,7 @@ class BeritaModel extends Model
 
     protected $validationRules = [
         'judul' => 'required|min_length[3]|max_length[200]',
-        'slug' => 'required|max_length[220]|is_unique[berita.slug,id,{id}]',
+        'slug' => 'required|max_length[220]',
         'konten' => 'required|min_length[10]',
         'kategori' => 'required|max_length[50]',
         'status' => 'required|in_list[draft,published]',

@@ -11,7 +11,11 @@ class BeritaController extends BaseController
     public function index(): string
     {
         $model = new BeritaModel();
-        $berita = $model->orderBy('created_at', 'DESC')->paginate(10);
+        $berita = $model
+            ->select('berita.*, users.nama AS penulis_nama')
+            ->join('users', 'users.id = berita.penulis_id', 'left')
+            ->orderBy('berita.created_at', 'DESC')
+            ->paginate(10);
 
         return view('admin/berita/index', [
             'title' => 'Daftar Berita',
