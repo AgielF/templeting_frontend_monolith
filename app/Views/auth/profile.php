@@ -31,65 +31,117 @@
                 <dd class="col-sm-8"><?= esc($user['jurusan'] ?? '-') ?></dd>
             </dl>
 
-            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+            <button type="button" class="btn btn--primary" data-modal-open="editProfileModal">
                 <i class="fas fa-edit me-1" aria-hidden="true"></i> Edit Profil
             </button>
         </div>
     </div>
 </div>
 
-<!-- Modal Edit Profil -->
-<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editProfileModalLabel">Edit Profil</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="<?= base_url('admin/profile/update') ?>" method="post">
-                <?= csrf_field() ?>
-                <div class="modal-body">
-                    <?php $errors = session('errors') ?? []; ?>
-                    <?php if (!empty($errors)): ?>
-                        <div class="alert alert-danger" role="alert">
-                            <?php foreach ((array) $errors as $error): ?>
-                                <div><?= esc($error) ?></div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
+<?php
+$errors = session('errors') ?? [];
+$validationErrors = is_array($errors) ? $errors : [];
+$validationInstance = $validation ?? null;
+$getFieldError = static function (string $field) use ($validationErrors, $validationInstance): string {
+    if ($validationInstance !== null) {
+        return (string) ($validationInstance->getError($field) ?? '');
+    }
 
-                    <div class="mb-3">
-                        <label for="nama" class="form-label">Nama</label>
-                        <input type="text" class="form-control" id="nama" name="nama"
-                               value="<?= esc($user['nama'] ?? '') ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="nomor" class="form-label">Nomor</label>
-                        <input type="text" class="form-control" id="nomor" name="nomor"
-                               value="<?= esc($user['nomor'] ?? '') ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="no_telp" class="form-label">Nomor Telepon</label>
-                        <input type="text" class="form-control" id="no_telp" name="no_telp"
-                               value="<?= esc($user['no_telp'] ?? '') ?>">
-                    </div>
-                    <div class="mb-3">
-                        <label for="jurusan" class="form-label">Jurusan</label>
-                        <input type="text" class="form-control" id="jurusan" name="jurusan"
-                               value="<?= esc($user['jurusan'] ?? '') ?>">
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password Baru</label>
-                        <input type="password" class="form-control" id="password" name="password">
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                </div>
-            </form>
-        </div>
+    return (string) ($validationErrors[$field] ?? '');
+};
+
+ob_start();
+?>
+<form id="profileForm" action="<?= base_url('admin/profile/update') ?>" method="post">
+    <?= csrf_field() ?>
+    <div class="visually-hidden" role="status" aria-live="polite">
+        <?php if (session()->getFlashdata('success')): ?>
+            <?= esc(session()->getFlashdata('success')) ?>
+        <?php elseif (session()->getFlashdata('error')): ?>
+            <?= esc(session()->getFlashdata('error')) ?>
+        <?php endif; ?>
     </div>
-</div>
 
+    <?php if (session()->getFlashdata('success')): ?>
+        <div class="alert alert--success" role="status" aria-live="polite">
+            <?= esc(session()->getFlashdata('success')) ?>
+        </div>
+    <?php endif; ?>
+    <?php if (session()->getFlashdata('error')): ?>
+        <div class="alert alert--error" role="alert" aria-live="polite">
+            <?= esc(session()->getFlashdata('error')) ?>
+        </div>
+    <?php endif; ?>
+    <?php if (!empty($validationErrors)): ?>
+        <div class="alert alert--error" role="alert">
+            <?php foreach ($validationErrors as $error): ?>
+                <div><?= esc($error) ?></div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php $namaError = $getFieldError('nama'); ?>
+    <div class="form-field">
+        <label for="nama" class="form-field__label">Nama</label>
+        <input type="text" class="form-field__input" id="nama" name="nama"
+               value="<?= esc(old('nama', $user['nama'] ?? '')) ?>" required
+               aria-describedby="nama-hint nama-error"<?= $namaError ? ' aria-invalid="true"' : '' ?>>
+        <span id="nama-hint" class="form-field__hint">Minimal 3 karakter.</span>
+        <span id="nama-error" class="form-field__error" role="alert"><?= esc($namaError) ?></span>
+    </div>
+
+    <?php $nomorError = $getFieldError('nomor'); ?>
+    <div class="form-field">
+        <label for="nomor" class="form-field__label">Nomor</label>
+        <input type="text" class="form-field__input" id="nomor" name="nomor"
+               value="<?= esc(old('nomor', $user['nomor'] ?? '')) ?>" required
+               aria-describedby="nomor-hint nomor-error"<?= $nomorError ? ' aria-invalid="true"' : '' ?>>
+        <span id="nomor-hint" class="form-field__hint">Nomor digunakan untuk login.</span>
+        <span id="nomor-error" class="form-field__error" role="alert"><?= esc($nomorError) ?></span>
+    </div>
+
+    <?php $phoneError = $getFieldError('no_telp'); ?>
+    <div class="form-field">
+        <label for="no_telp" class="form-field__label">Nomor Telepon</label>
+        <input type="text" class="form-field__input" id="no_telp" name="no_telp"
+               value="<?= esc(old('no_telp', $user['no_telp'] ?? '')) ?>"
+               aria-describedby="no_telp-hint no_telp-error"<?= $phoneError ? ' aria-invalid="true"' : '' ?>>
+        <span id="no_telp-hint" class="form-field__hint">Opsional.</span>
+        <span id="no_telp-error" class="form-field__error" role="alert"><?= esc($phoneError) ?></span>
+    </div>
+
+    <?php $majorError = $getFieldError('jurusan'); ?>
+    <div class="form-field">
+        <label for="jurusan" class="form-field__label">Jurusan</label>
+        <input type="text" class="form-field__input" id="jurusan" name="jurusan"
+               value="<?= esc(old('jurusan', $user['jurusan'] ?? '')) ?>"
+               aria-describedby="jurusan-hint jurusan-error"<?= $majorError ? ' aria-invalid="true"' : '' ?>>
+        <span id="jurusan-hint" class="form-field__hint">Opsional.</span>
+        <span id="jurusan-error" class="form-field__error" role="alert"><?= esc($majorError) ?></span>
+    </div>
+
+    <?php $passwordError = $getFieldError('password'); ?>
+    <div class="form-field">
+        <label for="password" class="form-field__label">Password Baru</label>
+        <input type="password" class="form-field__input" id="password" name="password"
+               aria-describedby="password-hint password-error"<?= $passwordError ? ' aria-invalid="true"' : '' ?>>
+        <span id="password-hint" class="form-field__hint">Kosongkan jika tidak ingin mengganti password.</span>
+        <span id="password-error" class="form-field__error" role="alert"><?= esc($passwordError) ?></span>
+    </div>
+</form>
+<?php
+$profileForm = ob_get_clean();
+?>
+
+<?= view('components/_modal', [
+    'id' => 'editProfileModal',
+    'title' => 'Edit Profil',
+    'body' => $profileForm,
+    'footer' => '<button type="button" class="btn btn--outline" data-modal-close>Batal</button><button type="submit" form="profileForm" class="btn btn--primary">Simpan</button>',
+]) ?>
+
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script src="<?= base_url('assets/js/app.js') ?>"></script>
 <?= $this->endSection() ?>

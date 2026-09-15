@@ -7,6 +7,9 @@
     <title><?= esc($title ?? 'Admin Panel') ?></title>
     <link rel="stylesheet" href="<?= base_url('assets/bootstrap/css/bootstrap.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/fontawesome/css/all.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/tokens.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/admin.css') ?>">
     <?= $this->renderSection('styles') ?>
 </head>
 <body>

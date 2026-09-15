@@ -1,0 +1,225 @@
+/*
+ * admin.css - Block layer untuk admin panel.
+ * Semua warna, spacing, typography, radius, shadow, dan transition memakai tokens.css.
+ */
+
+/* ---------- Modal (Block) ---------- */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    display: none;
+}
+
+.modal.is-open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-surface-dark) 50%, transparent);
+}
+
+.modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 32rem;
+    max-height: 90vh;
+    margin: var(--space-4);
+    overflow: auto;
+    background: var(--color-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.modal__title {
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-semibold);
+}
+
+.modal__close {
+    padding: var(--space-2);
+    color: var(--color-text-muted);
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--text-xl);
+    line-height: 1;
+}
+
+.modal__close:hover {
+    color: var(--color-text);
+    background: var(--color-bg-alt);
+}
+
+.modal__body {
+    padding: var(--space-6);
+}
+
+.modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--color-border);
+}
+
+/* ---------- Button (Block) ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 40px;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn--primary {
+    color: var(--color-bg);
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.btn--primary:hover {
+    color: var(--color-bg);
+    background: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
+.btn--outline {
+    color: var(--color-text);
+    background: var(--color-bg);
+    border-color: var(--color-border);
+}
+
+.btn--outline:hover {
+    background: var(--color-bg-alt);
+    border-color: var(--color-text-muted);
+}
+
+/* ---------- Form Field (Block) ---------- */
+.form-field {
+    margin-bottom: var(--space-4);
+}
+
+.form-field__label {
+    display: block;
+    margin-bottom: var(--space-2);
+    color: var(--color-text);
+    font-weight: var(--font-weight-medium);
+}
+
+.form-field__input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-field__input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 var(--space-1) var(--color-primary-light);
+}
+
+.form-field__input[aria-invalid="true"] {
+    border-color: var(--color-danger);
+}
+
+.form-field__hint,
+.form-field__error {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+}
+
+.form-field__hint {
+    color: var(--color-text-muted);
+}
+
+.form-field__error {
+    color: var(--color-danger);
+}
+
+/* ---------- Alert (Block) ---------- */
+.alert {
+    margin-bottom: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+}
+
+.alert--success {
+    color: var(--color-success);
+    background: color-mix(in srgb, var(--color-success) 10%, var(--color-bg));
+    border-color: var(--color-success);
+}
+
+.alert--error {
+    color: var(--color-danger);
+    background: color-mix(in srgb, var(--color-danger) 10%, var(--color-bg));
+    border-color: var(--color-danger);
+}
+
+.alert--info {
+    color: var(--color-primary-dark);
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+}
+
+/* ---------- Utility ---------- */
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+/* ---------- Exception: mobile modal ---------- */
+@media (max-width: 767px) {
+    .modal.is-open {
+        align-items: flex-end;
+    }
+
+    .modal__dialog {
+        max-width: 100%;
+        max-height: 95vh;
+        margin: 0;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+}
