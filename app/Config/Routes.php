@@ -8,6 +8,8 @@ $routes->get('logout', 'AuthController::logout');
 $routes->group('admin', ['filter' => 'auth'], function ($routes) {
     $routes->get('', 'DashboardController::index');
     $routes->get('dashboard', 'DashboardController::index');
+    $routes->get('profile', 'DashboardController::profile');
+    $routes->post('profile/update', 'DashboardController::updateProfile');
     $routes->get('example', 'ExampleController::index');
     $routes->post('example/store', 'ExampleController::store');
     $routes->post('example/update/(:num)', 'ExampleController::update/$1');

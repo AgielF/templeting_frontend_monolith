@@ -2,20 +2,28 @@
 
 <?= $this->section('content') ?>
 <div class="container-fluid py-4">
-    <h1 class="h3 mb-4">Dashboard</h1>
-    <div class="alert alert-info">
-        Welcome, <strong><?= esc(session()->get('nama') ?? 'User') ?></strong>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Example CRUD</h5>
-                    <p class="card-text">Contoh modul CRUD untuk template.</p>
-                    <a href="<?= base_url('admin/example') ?>" class="btn btn-primary btn-sm">Kelola</a>
-                </div>
+    <h1 class="h3 mb-4">Profil Pengguna</h1>
+    <?php if (empty($user)): ?>
+        <div class="alert alert-danger" role="alert">Data pengguna tidak ditemukan.</div>
+    <?php else: ?>
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5 card-title mb-4">Informasi Profil</h2>
+                <dl class="row mb-4">
+                    <dt class="col-sm-3">Nama</dt>
+                    <dd class="col-sm-9"><?= esc($user['nama'] ?? '-') ?></dd>
+                    <dt class="col-sm-3">Nomor</dt>
+                    <dd class="col-sm-9"><?= esc($user['nomor'] ?? '-') ?></dd>
+                    <dt class="col-sm-3">Nomor Telepon</dt>
+                    <dd class="col-sm-9"><?= esc($user['no_telp'] ?? '-') ?></dd>
+                    <dt class="col-sm-3">Jurusan</dt>
+                    <dd class="col-sm-9"><?= esc($user['jurusan'] ?? '-') ?></dd>
+                    <dt class="col-sm-3">Role</dt>
+                    <dd class="col-sm-9"><?= esc($role_name ?? '-') ?></dd>
+                </dl>
+                <a href="<?= base_url('admin/profile') ?>" class="btn btn-primary">Edit Profil</a>
             </div>
         </div>
-    </div>
+    <?php endif; ?>
 </div>
 <?= $this->endSection() ?>

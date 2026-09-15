@@ -46,7 +46,7 @@
                 <h5 class="modal-title" id="editProfileModalLabel">Edit Profil</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="<?= base_url('profile/update') ?>" method="post" enctype="multipart/form-data">
+            <form action="<?= base_url('admin/profile/update') ?>" method="post">
                 <?= csrf_field() ?>
                 <div class="modal-body">
                     <?php $errors = session('errors') ?? []; ?>
