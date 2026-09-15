@@ -1,0 +1,14 @@
+<?php
+use CodeIgniter\Router\RouteCollection;
+/** @var RouteCollection $routes */
+$routes->get('/', 'Home::index');
+$routes->get('login', 'AuthController::login');
+$routes->post('login', 'AuthController::attemptLogin');
+$routes->get('logout', 'AuthController::logout');
+$routes->group('admin', ['filter' => 'auth'], function ($routes) {
+    $routes->get('dashboard', 'DashboardController::index');
+    $routes->get('example', 'ExampleController::index');
+    $routes->post('example/store', 'ExampleController::store');
+    $routes->post('example/update/(:num)', 'ExampleController::update/$1');
+    $routes->get('example/delete/(:num)', 'ExampleController::delete/$1');
+});
